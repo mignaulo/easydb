@@ -75,7 +75,7 @@ class EasyDB
             // Don't allow foot-bullets
             return null;
         }
-        $queryString = "DELETE FROM ".$this->escapeIdentifier($table)." WHERE ";
+        $queryString = "DELETE FROM ".$this->escapeTableIdentifier($table)." WHERE ";
         
         // Simple array for joining the strings together
         $arr = [];
@@ -97,6 +97,31 @@ class EasyDB
         $queryString .= \implode(' AND ', $arr);
 
         return $this->safeQuery($queryString, $params);
+    }
+
+    /**
+     * Make sure only valid characters make it in table names
+     * 
+     * @param string $string - table name
+     * @param boolean $quote - certain SQLs escape table names (i.e. mysql with `backticks`)
+     * @return string
+     * @throws InvalidArgumentException
+     */
+    public function escapeTableIdentifier($string, $quote = true)
+    {
+        if (!\is_string($string)) {
+            throw new Issues\InvalidIdentifier("Invalid identifier: Must be a string.");
+        }
+
+        // split the elements of the table path and escape them individually
+        $arr = \explode(".", $string);
+        $arr = \array_map(
+            function ($el) use ($quote) {
+                return $this->escapeIdentifier($el, $quote);
+            },
+            $arr
+        );
+        return \implode(".", $arr);
     }
     
     /**
@@ -167,7 +192,7 @@ class EasyDB
             return null;
         }
         // Begin query string
-        $queryString = "INSERT INTO ".$this->escapeIdentifier($table)." (";
+        $queryString = "INSERT INTO ".$this->escapeTableIdentifier($table)." (";
         $phold = [];
         $_keys = [];
         $params = [];
@@ -231,7 +256,7 @@ class EasyDB
         }
 
         // Begin query string
-        $queryString = "INSERT INTO ".$this->escapeIdentifier($table)." (";
+        $queryString = "INSERT INTO ".$this->escapeTableIdentifier($table)." (";
 
         // Let's make sure our keys are escaped.
         $keys = \array_keys($first);
@@ -393,7 +418,7 @@ class EasyDB
         if (empty($changes) || empty($conditions)) {
             return null;
         }
-        $queryString = "UPDATE ".$this->escapeIdentifier($table)." SET ";
+        $queryString = "UPDATE ".$this->escapeTableIdentifier($table)." SET ";
         
         // The first set (pre WHERE)
         $pre = [];
