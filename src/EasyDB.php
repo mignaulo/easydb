@@ -205,7 +205,7 @@ class EasyDB
                     $phold[] = 'FALSE';
                 } elseif ($v instanceof Literal) {
                     $phold[] = $v->getLiteral();
-                    array_merge($params, $v->getValues());
+                    $params = array_merge($params, $v->getValues());
                 } elseif (\is_array($v)) {
                     throw new \InvalidArgumentException("Only one dimensional arrays are allowed");
                 } else {
@@ -438,7 +438,7 @@ class EasyDB
                 $pre []= " {$i} = FALSE";
             } elseif ($v instanceof Literal) {
                 $pre[] = " {$i} = {$v->getLiteral()}";
-                array_merge($params, $v->getValues());
+                $params = array_merge($params, $v->getValues());
             } else {
                 $pre []= " {$i} = ?";
                 $params[] = $v;
