@@ -293,7 +293,7 @@ class EasyDB
             }
             $exec = $stmt->execute($params);
             if ($exec === false) {
-                throw new Issues\QueryError(json_encode([$queryString, $params, $this->pdo->errorInfo()]));
+                throw new Issues\QueryError(json_encode([$queryString, $params, $stmt->errorInfo()]));
             }
         }
         return $exec;
@@ -367,9 +367,9 @@ class EasyDB
         if ($exec === false) {
             throw new Issues\QueryError(
                 \json_encode([
-                    $stmt,
+                    $statement,
                     $params, 
-                    $this->pdo->errorInfo()
+                    $stmt->errorInfo()
                 ])
             );
         }
@@ -395,9 +395,9 @@ class EasyDB
         if ($exec === false) {
             throw new Issues\QueryError(
                 \json_encode([
-                    $stmt,
+                    $statement,
                     $params, 
-                    $this->pdo->errorInfo()
+                    $stmt->errorInfo()
                 ])
             );
         }
