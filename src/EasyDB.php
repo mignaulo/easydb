@@ -287,13 +287,28 @@ class EasyDB
 
         // Now let's run a query with the parameters
         $stmt = $this->pdo->prepare($queryString);
+        if ($stmt === false) {
+            throw new Issues\QueryError(
+                \json_encode([
+                    $queryString,
+                    $params, 
+                    $this->pdo->errorInfo()
+                ])
+            );
+        }
         foreach ($maps as $params) {
             if (\count($params) !== \count($params, COUNT_RECURSIVE)){
                 throw new \InvalidArgumentException("Invalid params");
             }
             $exec = $stmt->execute($params);
             if ($exec === false) {
-                throw new Issues\QueryError(json_encode([$queryString, $params, $stmt->errorInfo()]));
+                throw new Issues\QueryError(
+                    \json_encode([
+                        $queryString,
+                        $params, 
+                        $stmt->errorInfo()
+                    ])
+                );
             }
         }
         return $exec;
@@ -360,6 +375,15 @@ class EasyDB
             return false;
         }
         $stmt = $this->pdo->prepare($statement);
+        if ($stmt === false) {
+            throw new Issues\QueryError(
+                \json_encode([
+                    $statement,
+                    $params, 
+                    $this->pdo->errorInfo()
+                ])
+            );
+        }
         if (\count($params) !== \count($params, COUNT_RECURSIVE)){
             throw new \InvalidArgumentException("Invalid params");
         }
@@ -391,6 +415,15 @@ class EasyDB
             throw new \InvalidArgumentException("Statement must be a string");
         }
         $stmt = $this->pdo->prepare($statement);
+        if ($stmt === false) {
+            throw new Issues\QueryError(
+                \json_encode([
+                    $statement,
+                    $params, 
+                    $this->pdo->errorInfo()
+                ])
+            );
+        }
         $exec = $stmt->execute($params);
         if ($exec === false) {
             throw new Issues\QueryError(
