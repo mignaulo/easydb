@@ -324,7 +324,7 @@ class EasyDB
     {
         return $this->safeQuery($statement, $params);
     }
-    
+
     /**
      * Replace a row into a table in a database.
      *
@@ -334,7 +334,7 @@ class EasyDB
      */
     public function replace($table, array $map)
     {
-        return $this->insert($table, $map, "REPLACE")
+        return $this->insert($table, $map, "REPLACE");
     }
 
     /**
