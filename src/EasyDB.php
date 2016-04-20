@@ -186,13 +186,13 @@ class EasyDB
      * @param array $map - associative array of which values should be assigned to each field
      * @throws InvalidArgumentException
      */
-    public function insert($table, array $map)
+    public function insert($table, array $map, $queryType = "INSERT")
     {
         if (empty($map)) {
             return null;
         }
         // Begin query string
-        $queryString = "INSERT INTO ".$this->escapeTableIdentifier($table)." (";
+        $queryString = $queryType . " INTO ".$this->escapeTableIdentifier($table)." (";
         $phold = [];
         $_keys = [];
         $params = [];
@@ -323,6 +323,18 @@ class EasyDB
     public function q($statement, ...$params)
     {
         return $this->safeQuery($statement, $params);
+    }
+    
+    /**
+     * Replace a row into a table in a database.
+     *
+     * @param string $table - table name
+     * @param array $map - associative array of which values should be assigned to each field
+     * @throws InvalidArgumentException
+     */
+    public function replace($table, array $map)
+    {
+        return $this->insert($table, $map, "REPLACE")
     }
 
     /**
