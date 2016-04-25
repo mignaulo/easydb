@@ -197,23 +197,24 @@ class EasyDB
         $_keys = [];
         $params = [];
         foreach ($map as $k => $v) {
-            if ($v !== null) {
-                $_keys[] = $k;
-                if ($v === true) {
-                    $phold[] = 'TRUE';
-                } elseif ($v === false) {
-                    $phold[] = 'FALSE';
-                } elseif ($v instanceof Literal) {
-                    $phold[] = $v->getLiteral();
-                    $params = array_merge($params, $v->getValues());
-                } elseif (\is_array($v)) {
-                    throw new \InvalidArgumentException("Only one dimensional arrays are allowed");
-                } else {
-                    // When all else fails, use prepared statements:
-                    $phold[] = '?';
-                    $params[] = $v;
-                }
+            $_keys[] = $k;
+            if ($v === null) {
+                $phold[] = 'NULL';
+            } elseif ($v === true) {
+                $phold[] = 'TRUE';
+            } elseif ($v === false) {
+                $phold[] = 'FALSE';
+            } elseif ($v instanceof Literal) {
+                $phold[] = $v->getLiteral();
+                $params = array_merge($params, $v->getValues());
+            } elseif (\is_array($v)) {
+                throw new \InvalidArgumentException("Only one dimensional arrays are allowed");
+            } else {
+                // When all else fails, use prepared statements:
+                $phold[] = '?';
+                $params[] = $v;
             }
+            
         }
         // Let's make sure our keys are escaped.
         $keys = [];
