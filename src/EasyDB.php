@@ -230,7 +230,7 @@ class EasyDB
         // Necessary to close the open ( above
         $queryString .= ");";
         // Now let's run a query with the parameters
-        return $this->safeQuery($queryString, $params);
+        return $this->safeQuery($queryString, $params, null);
     }
     
     /**
@@ -410,6 +410,9 @@ class EasyDB
                 ])
             );
         }
+        if($fetch_style == null) {
+            return $exec;
+        }
         return $stmt->fetchAll($fetch_style);
     }
 
@@ -513,7 +516,7 @@ class EasyDB
         }
         $queryString .= \implode(' AND ', $post);
 
-        return $this->safeQuery($queryString, $params);
+        return $this->safeQuery($queryString, $params, null);
     }
     
     /**
