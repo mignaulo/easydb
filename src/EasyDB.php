@@ -79,6 +79,7 @@ class EasyDB
         
         // Simple array for joining the strings together
         $arr = [];
+        $params = [];
         foreach ($conditions as $i => $v) {
             $i = $this->escapeIdentifier($i);
             if ($v === null) {
@@ -87,6 +88,9 @@ class EasyDB
                 $arr [] = " {$i} = TRUE ";
             } elseif ($v === false) {
                 $arr [] = " {$i} = FALSE ";
+            } elseif ($v instanceof Literal) {
+                $arr [] = " {$i} = {$v->getLiteral()}";
+                $params = array_merge($params, $v->getValues());
             } elseif (\is_array($v)) {
                 throw new \InvalidArgumentException("Only one dimensional arrays are allowed");
             } else {
@@ -474,6 +478,7 @@ class EasyDB
         
         // The first set (pre WHERE)
         $pre = [];
+        $params = [];
         foreach ($changes as $i => $v) {
             if (!is_string($i)) {
                 throw new \InvalidArgumentException("Column name must be a string");
@@ -486,7 +491,7 @@ class EasyDB
             } elseif ($v === false) {
                 $pre []= " {$i} = FALSE";
             } elseif ($v instanceof Literal) {
-                $pre[] = " {$i} = {$v->getLiteral()}";
+                $pre []= " {$i} = {$v->getLiteral()}";
                 $params = array_merge($params, $v->getValues());
             } else {
                 $pre []= " {$i} = ?";
@@ -509,6 +514,9 @@ class EasyDB
                 $post []= " {$i} = TRUE";
             } elseif ($v === false) {
                 $post []= " {$i} = FALSE";
+            } elseif ($v instanceof Literal) {
+                $post []= " {$i} = {$v->getLiteral()}";
+                $params = array_merge($params, $v->getValues());
             } else {
                 $post []= " {$i} = ?";
                 $params[] = $v;
